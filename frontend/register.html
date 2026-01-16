@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Page</title>
+
+    <!-- ===== CSS ===== -->
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .register-box {
+            background: #fff;
+            padding: 30px;
+            width: 340px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .register-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .register-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .register-box button {
+            width: 100%;
+            padding: 10px;
+            background: #185a9d;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .register-box button:hover {
+            background: #144a82;
+        }
+
+        .message {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .login-link {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .login-link a {
+            color: #185a9d;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HTML ===== -->
+    <div class="register-box">
+        <h2>Register</h2>
+
+        <input type="text" id="username" placeholder="Username">
+
+        <input type="password" id="password" placeholder="Password">
+
+        <input type="password" id="confirmPassword" placeholder="Confirm Password">
+
+        <button onclick="register()">Register</button>
+
+        <div class="message" id="message"></div>
+
+        <div class="login-link">
+            Already have an account?
+            <a href="login.html">Login here</a>
+        </div>
+    </div>
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+        function register() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const message = document.getElementById("message");
+
+            // Special character regex
+            const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+            if (username === "" || password === "" || confirmPassword === "") {
+                message.style.color = "red";
+                message.textContent = "All fields are required";
+                return;
+            }
+
+            if (!specialChar
