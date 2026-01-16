@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forgot Password</title>
+
+    <!-- ===== CSS (same as login & register page) ===== -->
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .forgot-box {
+            background: #ffffff;
+            padding: 30px;
+            width: 340px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .forgot-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .forgot-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .forgot-box button {
+            width: 100%;
+            padding: 10px;
+            background: #185a9d;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .forgot-box button:hover {
+            background: #144a82;
+        }
+
+        .links {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .links a {
+            text-decoration: none;
+            color: #185a9d;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HTML ===== -->
+    <div class="forgot-box">
+        <h2>Reset Password</h2>
+
+        <input type="password" id="newPassword" placeholder="New Password">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password">
+
+        <button onclick="resetPassword()">Reset Password</button>
+
+        <div class="message" id="message"></div>
+
+        <div class="links">
+            <a href="login.html">Back to Login</a>
+        </div>
+    </div>
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+        function resetPassword() {
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const message = document.getElementById("message");
+
+            // Special character validation
+            const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+            if (newPassword === "" || confirmPassword === "") {
+                message.style.color = "red";
+                message.textContent = "All fields are required";
+                return;
+            }
+
+            if (!specialCharRegex.test(newPassword)) {
+                message.style.color = "red";
+                message.textContent = "Password must contain at least one special character";
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                message.style.color = "red";
+                message.textContent = "Passwords do not match";
+                return;
+            }
+
+            message.style.color = "green";
+            message.textContent = "Password reset successful!";
+        }
+    </script>
+
+</body>
+</html>
