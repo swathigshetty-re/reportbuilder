@@ -98,35 +98,20 @@
 
     <!-- ===== JavaScript ===== -->
     <script>
-        function resetPassword() {
-            const newPassword = document.getElementById("newPassword").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
-            const message = document.getElementById("message");
+        <script>
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get("role");
 
-            // Special character validation
-            const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const title = document.querySelector("h2");
 
-            if (newPassword === "" || confirmPassword === "") {
-                message.style.color = "red";
-                message.textContent = "All fields are required";
-                return;
-            }
+    if (role === "admin") {
+        title.innerText = "Admin Reset Password";
+    } else if (role === "viewer") {
+        title.innerText = "Viewer Reset Password";
+    }
+</script>
 
-            if (!specialCharRegex.test(newPassword)) {
-                message.style.color = "red";
-                message.textContent = "Password must contain at least one special character";
-                return;
-            }
-
-            if (newPassword !== confirmPassword) {
-                message.style.color = "red";
-                message.textContent = "Passwords do not match";
-                return;
-            }
-
-            message.style.color = "green";
-            message.textContent = "Password reset successful!";
-        }
+        
     </script>
 
 </body>

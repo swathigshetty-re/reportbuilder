@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Role</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .role-box {
+            background: #fff;
+            padding: 30px;
+            width: 360px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        .role-box h2 {
+            margin-bottom: 25px;
+        }
+
+        .role-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: #185a9d;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .role-btn:hover {
+            background: #144a82;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="role-box">
+        <h2>Select Your Role</h2>
+
+        <button class="role-btn" onclick="goToAdmin()">Admin</button>
+        <button class="role-btn" onclick="goToViewer()">Viewer</button>
+    </div>
+
+    <script>
+        function goToAdmin() {
+            window.location.href = "register.html?role=admin";
+        }
+
+        function goToViewer() {
+            window.location.href = "register.html?role=viewer";
+        }
+    </script>
+
+</body>
+</html>

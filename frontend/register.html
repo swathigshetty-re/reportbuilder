@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register Page</title>
+    <title>Register</title>
 
-    <!-- ===== CSS ===== -->
     <style>
         * {
             box-sizing: border-box;
@@ -56,65 +55,86 @@
             background: #144a82;
         }
 
+        .links {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .links a {
+            text-decoration: none;
+            color: #185a9d;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
         .message {
             margin-top: 10px;
             text-align: center;
             font-size: 14px;
         }
-
-        .login-link {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .login-link a {
-            color: #185a9d;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .login-link a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
 
-    <!-- ===== HTML ===== -->
     <div class="register-box">
-        <h2>Register</h2>
+        <h2 id="roleTitle">Register</h2>
 
-        <input type="text" id="username" placeholder="Username">
-
+        <input type="text" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
-
         <input type="password" id="confirmPassword" placeholder="Confirm Password">
 
         <button onclick="register()">Register</button>
 
         <div class="message" id="message"></div>
 
-        <div class="login-link">
+        <!-- ✅ Login link WITH role -->
+        <div class="links">
             Already have an account?
-            <a href="login.html">Login here</a>
+            <a id="loginLink" href="login.html">Login</a>
         </div>
     </div>
 
-    <!-- ===== JavaScript ===== -->
     <script>
+        const params = new URLSearchParams(window.location.search);
+        const role = params.get("role");
+
+        const title = document.getElementById("roleTitle");
+        const loginLink = document.getElementById("loginLink");
+
+        if (role === "admin") {
+            title.innerText = "Admin Register";
+            loginLink.href = "login.html?role=admin";
+        } else if (role === "viewer") {
+            title.innerText = "Viewer Register";
+            loginLink.href = "login.html?role=viewer";
+        }
+
         function register() {
-            const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
             const message = document.getElementById("message");
 
-            // Special character regex
             const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
-            if (username === "" || password === "" || confirmPassword === "") {
+            if (!specialCharRegex.test(password)) {
                 message.style.color = "red";
-                message.textContent = "All fields are required";
+                message.textContent = "Password must contain a special character";
                 return;
             }
 
-            if (!specialChar
+            if (password !== confirmPassword) {
+                message.style.color = "red";
+                message.textContent = "Passwords do not match";
+                return;
+            }
+
+            message.style.color = "green";
+            message.textContent = "Registration successful!";
+        }
+    </script>
+
+</body>
+</html>
