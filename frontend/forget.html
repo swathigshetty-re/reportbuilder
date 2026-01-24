@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Forgot Password</title>
+    <title>Reset Password</title>
 
-    <!-- ===== CSS (same as login & register page) ===== -->
     <style>
         * {
             box-sizing: border-box;
@@ -56,63 +55,67 @@
             background: #144a82;
         }
 
-        .links {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .links a {
-            text-decoration: none;
-            color: #185a9d;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-        }
-
         .message {
             margin-top: 12px;
             text-align: center;
             font-size: 14px;
+            color: green;
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== HTML ===== -->
-    <div class="forgot-box">
-        <h2>Reset Password</h2>
+<div class="forgot-box">
+    <h2 id="title">Reset Password</h2>
 
-        <input type="password" id="newPassword" placeholder="New Password">
-        <input type="password" id="confirmPassword" placeholder="Confirm Password">
+    <input type="password" id="newPassword" placeholder="New Password">
+    <input type="password" id="confirmPassword" placeholder="Confirm Password">
 
-        <button onclick="resetPassword()">Reset Password</button>
+    <button onclick="resetPassword()">Reset Password</button>
 
-        <div class="message" id="message"></div>
+    <div class="message" id="message"></div>
+</div>
 
-        <div class="links">
-            <a href="login.html">Back to Login</a>
-        </div>
-    </div>
-
-    <!-- ===== JavaScript ===== -->
-    <script>
-        <script>
+<script>
+    // Change title based on role
     const params = new URLSearchParams(window.location.search);
     const role = params.get("role");
-
-    const title = document.querySelector("h2");
+    const title = document.getElementById("title");
 
     if (role === "admin") {
         title.innerText = "Admin Reset Password";
     } else if (role === "viewer") {
         title.innerText = "Viewer Reset Password";
     }
-</script>
 
-        
-    </script>
+    // Reset password logic
+    function resetPassword() {
+        const newPass = document.getElementById("newPassword").value;
+        const confirmPass = document.getElementById("confirmPassword").value;
+        const message = document.getElementById("message");
+
+        if (newPass === "" || confirmPass === "") {
+            message.style.color = "red";
+            message.innerText = "Please fill all fields";
+            return;
+        }
+
+        if (newPass !== confirmPass) {
+            message.style.color = "red";
+            message.innerText = "Passwords do not match";
+            return;
+        }
+
+        // Success message
+        message.style.color = "green";
+        message.innerText = "Password reset successful! Redirecting to login...";
+
+        // Redirect to login page after 2 seconds
+        setTimeout(() => {
+            window.location.href = "login.html";
+        }, 2000);
+    }
+</script>
 
 </body>
 </html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Report</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f4f6f9;
+    padding:30px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:8px;
+    max-width:500px;
+    margin:auto;
+}
+
+input, textarea, select, button{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+}
+
+button{
+    background:#3498db;
+    color:white;
+    border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h2>Add Report</h2>
+
+<input id="name" placeholder="User Name">
+<input id="role" placeholder="Role">
+<input id="project" placeholder="Project Name">
+
+<textarea id="comment" placeholder="Initial Comment"></textarea>
+
+<select id="status">
+    <option>Project Created</option>
+    <option>In Progress</option>
+    <option>Completed</option>
+</select>
+
+<button onclick="addReport()">Add Report</button>
+</div>
+
+<script>
+function addReport(){
+    let reports = JSON.parse(localStorage.getItem("reports")) || [];
+
+    reports.push({
+        name: name.value,
+        role: role.value,
+        project: project.value,
+        comments: [
+            {
+                text: comment.value,
+                by: name.value,
+                date: new Date().toISOString().slice(0,10)
+            }
+        ],
+        status: {
+            text: status.value,
+            date: new Date().toISOString().slice(0,10)
+        }
+    });
+
+    localStorage.setItem("reports", JSON.stringify(reports));
+    alert("Report Added Successfully");
+}
+</script>
+
+</body>
+</html>
