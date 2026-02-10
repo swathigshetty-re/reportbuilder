@@ -82,7 +82,7 @@
     <div class="register-box">
         <h2 id="roleTitle">Register</h2>
 
-        <input type="text" placeholder="Username">
+        <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
         <input type="password" id="confirmPassword" placeholder="Confirm Password">
 
@@ -123,12 +123,17 @@
                 message.style.color = "red";
                 message.textContent = "Password must contain a special character";
                 return;
+				
             }
 
             if (password !== confirmPassword) {
                 message.style.color = "red";
                 message.textContent = "Passwords do not match";
                 return;
+				localStorage.setItem("loggedInUser", document.getElementById("username").value);
+				message.style.color = "green";
+				message.textContent = "Registration successful";
+				windows.location.href = "admin_dashboard.html";
             }
 
             message.style.color = "green";

@@ -83,14 +83,14 @@
     <div class="login-box">
         <h2 id="loginTitle">Login</h2>
 
-        <input type="text" placeholder="Username">
+        <input type="text" id="username" placeholder="Username">
         <input type="password" placeholder="Password">
 
-        <button>Login</button>
+        <button onclick="login()">Login</button>
 
         <!-- ✅ Forgot password + Register links -->
         <div class="links">
-            <a id="forgotLink" href="#">Forgot Password?</a>
+            <a id="forgotLink" href="forget.html">Forgot Password?</a>
             <a id="registerLink" href="register.html">Register</a>
         </div>
 
@@ -118,6 +118,21 @@
         else {
             forgotLink.href = "forgot-password.html";
         }
+		function login(){
+		let username = document.getElementById("username").value;
+		localStorage.setItem("loggedInUser",username);
+		localStorage.setItem("role","admin");
+		window.location.href="admin_dashboard.html";
+		function register(){
+		let username = document.getElementById("username").alue;
+		i(username === ""){
+		alert("Enter username");
+		return;
+		}
+		localStorage.setItem("registeredUser",username);
+		alert("Registration Successful");
+		window.location.href="admin_dashboard.html";
+		}
     </script>
 
 </body>
