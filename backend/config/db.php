@@ -1,13 +1,12 @@
 <?php
-$host = "localhost";
-$db   = "report_builder";
-$user = "root";
-$pass = "";
+$servername = "localhost";
+$dbname = "report_system";
+$username = "root";
+$password = "";   // Default in XAMPP
 
-try {
-    $conn = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    echo json_encode(["error" => "Database connection failed"]);
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+if(!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 ?>

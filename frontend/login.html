@@ -1,139 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
+<meta charset="UTF-8">
+<title>Login</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<style>
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-        body {
-            margin: 0;
-            height: 100vh;
-            background: linear-gradient(135deg, #43cea2, #185a9d);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #43cea2, #185a9d);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        .login-box {
-            background: #fff;
-            padding: 30px;
-            width: 340px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        }
+.login-box {
+    background: #fff;
+    padding: 30px;
+    width: 340px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
 
-        .login-box h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+.login-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-        .login-box input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+.login-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
-        .login-box button {
-            width: 100%;
-            padding: 10px;
-            background: #185a9d;
-            border: none;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+.login-box button {
+    width: 100%;
+    padding: 10px;
+    background: #185a9d;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-        .login-box button:hover {
-            background: #144a82;
-        }
+.login-box button:hover {
+    background: #144a82;
+}
 
-        .links {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 14px;
-        }
+.links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 14px;
+}
 
-        .links a {
-            text-decoration: none;
-            color: #185a9d;
-        }
+.links a {
+    text-decoration: none;
+    color: #185a9d;
+}
 
-        .links a:hover {
-            text-decoration: underline;
-        }
-
-        .message {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 14px;
-        }
-    </style>
+.links a:hover {
+    text-decoration: underline;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="login-box">
-        <h2 id="loginTitle">Login</h2>
+<div class="login-box">
+    <h2 id="loginTitle">Login</h2>
 
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" placeholder="Password">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
 
-        <button onclick="login()">Login</button>
+    <button onclick="login()">Login</button>
 
-        <!-- ✅ Forgot password + Register links -->
-        <div class="links">
-            <a id="forgotLink" href="forget.html">Forgot Password?</a>
-            <a id="registerLink" href="register.html">Register</a>
-        </div>
-
-        <div class="message"></div>
+    <div class="links">
+        <a id="forgotLink" href="forget.html">Forgot Password?</a>
+        <a id="registerLink" href="register.html">Register</a>
     </div>
+</div>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const role = params.get("role");
+<script>
+const params = new URLSearchParams(window.location.search);
+const role = params.get("role");
 
-        const loginTitle = document.getElementById("loginTitle");
-        const forgotLink = document.getElementById("forgotLink");
-        const registerLink = document.getElementById("registerLink");
+const loginTitle = document.getElementById("loginTitle");
+const forgotLink = document.getElementById("forgotLink");
+const registerLink = document.getElementById("registerLink");
 
-        if (role === "admin") {
-            loginTitle.innerText = "Admin Login";
-            forgotLink.href = "forget.html?role=admin";
-            registerLink.href = "register.html?role=admin";
-        } 
-        else if (role === "viewer") {
-            loginTitle.innerText = "Viewer Login";
-            forgotLink.href = "forget.html?role=viewer";
-            registerLink.href = "register.html?role=viewer";
-        } 
-        else {
-            forgotLink.href = "forgot-password.html";
+if (role === "admin") {
+    loginTitle.innerText = "Admin Login";
+    forgotLink.href = "forget.html?role=admin";
+    registerLink.href = "register.html?role=admin";
+} 
+else if (role === "viewer") {
+    loginTitle.innerText = "Viewer Login";
+    forgotLink.href = "forget.html?role=viewer";
+    registerLink.href = "register.html?role=viewer";
+}
+
+async function login() {
+
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    if (email === "" || password === "") {
+        alert("Please enter email and password");
+        return;
+    }
+
+    try {
+        const response = await fetch("login.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+
+            // Store login info
+            localStorage.setItem("user_id", result.user_id);
+            localStorage.setItem("role", result.role);
+
+            // Redirect based on role
+            if (result.role === "admin") {
+                window.location.href = "admin_dashboard.html";
+            } else {
+                window.location.href = "viewer_dashboard.html";
+            }
+
+        } else {
+            alert("Invalid credentials");
         }
-		function login(){
-		let username = document.getElementById("username").value;
-		localStorage.setItem("loggedInUser",username);
-		localStorage.setItem("role","admin");
-		window.location.href="admin_dashboard.html";
-		function register(){
-		let username = document.getElementById("username").alue;
-		i(username === ""){
-		alert("Enter username");
-		return;
-		}
-		localStorage.setItem("registeredUser",username);
-		alert("Registration Successful");
-		window.location.href="admin_dashboard.html";
-		}
-    </script>
+
+    } catch (error) {
+        alert("Server error. Check login.php path.");
+        console.error(error);
+    }
+}
+</script>
 
 </body>
 </html>

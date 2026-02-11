@@ -1,145 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Register</title>
+<title>Register</title>
+<style>
+body{
+    font-family: Arial;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    background:linear-gradient(135deg,#43cea2,#185a9d);
+}
 
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+.register-box{
+    background:white;
+    padding:30px;
+    width:320px;
+    border-radius:8px;
+}
 
-        body {
-            margin: 0;
-            height: 100vh;
-            background: linear-gradient(135deg, #43cea2, #185a9d);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+}
 
-        .register-box {
-            background: #fff;
-            padding: 30px;
-            width: 340px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        }
+button{
+    width:100%;
+    padding:10px;
+    background:#185a9d;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
 
-        .register-box h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+button:hover{
+    background:#144a82;
+}
 
-        .register-box input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .register-box button {
-            width: 100%;
-            padding: 10px;
-            background: #185a9d;
-            border: none;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .register-box button:hover {
-            background: #144a82;
-        }
-
-        .links {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .links a {
-            text-decoration: none;
-            color: #185a9d;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-        }
-
-        .message {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 14px;
-        }
-    </style>
+#message{
+    margin-top:10px;
+    font-size:14px;
+}
+</style>
 </head>
 <body>
 
-    <div class="register-box">
-        <h2 id="roleTitle">Register</h2>
+<div class="register-box">
+    <h2 id="roleTitle">Register</h2>
 
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <input type="password" id="confirmPassword" placeholder="Confirm Password">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <input type="password" id="confirmPassword" placeholder="Confirm Password">
 
-        <button onclick="register()">Register</button>
+    <button onclick="register()">Register</button>
 
-        <div class="message" id="message"></div>
+    <div id="message"></div>
 
-        <!-- ✅ Login link WITH role -->
-        <div class="links">
-            Already have an account?
-            <a id="loginLink" href="login.html">Login</a>
-        </div>
-    </div>
+    <p style="text-align:center;margin-top:15px;">
+        Already have account?
+        <a id="loginLink" href="login.html">Login</a>
+    </p>
+</div>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const role = params.get("role");
+<script>
 
-        const title = document.getElementById("roleTitle");
-        const loginLink = document.getElementById("loginLink");
+// Get role from URL
+const params = new URLSearchParams(window.location.search);
+const role = params.get("role") || "viewer";
 
-        if (role === "admin") {
-            title.innerText = "Admin Register";
-            loginLink.href = "login.html?role=admin";
-        } else if (role === "viewer") {
-            title.innerText = "Viewer Register";
-            loginLink.href = "login.html?role=viewer";
+// Update title
+document.getElementById("roleTitle").innerText =
+    role === "admin" ? "Admin Register" : "Viewer Register";
+
+// Update login link
+document.getElementById("loginLink").href =
+    "login.html?role=" + role;
+
+async function register() {
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirmPassword").value.trim();
+    const message = document.getElementById("message");
+
+    message.style.color = "red";
+    message.innerText = "";
+
+    // Validation
+    if (!username || !password || !confirmPassword) {
+        message.innerText = "All fields are required";
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        message.innerText = "Passwords do not match";
+        return;
+    }
+
+    try {
+        const response = await fetch("../backend/auth/register.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                role: role
+            })
+        });
+
+        // Check if response is OK
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
         }
 
-        function register() {
-            const password = document.getElementById("password").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
-            const message = document.getElementById("message");
+        const result = await response.json();
 
-            const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
-
-            if (!specialCharRegex.test(password)) {
-                message.style.color = "red";
-                message.textContent = "Password must contain a special character";
-                return;
-				
-            }
-
-            if (password !== confirmPassword) {
-                message.style.color = "red";
-                message.textContent = "Passwords do not match";
-                return;
-				localStorage.setItem("loggedInUser", document.getElementById("username").value);
-				message.style.color = "green";
-				message.textContent = "Registration successful";
-				windows.location.href = "admin_dashboard.html";
-            }
-
+        if (result.status === "success") {
             message.style.color = "green";
-            message.textContent = "Registration successful!";
+            message.innerText = "Registration successful!";
+            
+            setTimeout(() => {
+                window.location.href = "login.html?role=" + role;
+            }, 1000);
+
+        } else if (result.status === "exists") {
+            message.innerText = "Username already exists";
+
+        } else if (result.status === "empty") {
+            message.innerText = "Please fill all fields";
+
+        } else {
+            message.innerText = "Registration failed";
         }
-    </script>
+
+    } catch (error) {
+        message.innerText = "Server error. Check backend path or Apache.";
+        console.error(error);
+    }
+}
+
+</script>
 
 </body>
 </html>

@@ -1,72 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Select Role</title>
-
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
         body {
             margin: 0;
             height: 100vh;
-            background: linear-gradient(135deg, #43cea2, #185a9d);
             display: flex;
             justify-content: center;
             align-items: center;
+            font-family: Arial;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
         }
 
-        .role-box {
-            background: #fff;
+        .box {
+            background: white;
             padding: 30px;
-            width: 360px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            width: 300px;
             text-align: center;
+            border-radius: 10px;
         }
 
-        .role-box h2 {
-            margin-bottom: 25px;
-        }
-
-        .role-btn {
+        button {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
+            padding: 10px;
+            margin: 10px 0;
             background: #185a9d;
             color: white;
-            font-size: 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
-        .role-btn:hover {
+        button:hover {
             background: #144a82;
         }
     </style>
 </head>
 <body>
 
-    <div class="role-box">
-        <h2>Select Your Role</h2>
+<div class="box">
+    <h2>Select Role</h2>
 
-        <button class="role-btn" onclick="goToAdmin()">Admin</button>
-        <button class="role-btn" onclick="goToViewer()">Viewer</button>
-    </div>
+    <button onclick="selectRole('admin')">Admin</button>
+    <button onclick="selectRole('viewer')">Viewer</button>
+</div>
 
-    <script>
-        function goToAdmin() {
-            window.location.href = "register.html?role=admin";
-        }
-
-        function goToViewer() {
-            window.location.href = "register.html?role=viewer";
-        }
-    </script>
+<script>
+function selectRole(role) {
+    window.location.href = "register.html?role=" + role;
+}
+</script>
 
 </body>
 </html>
