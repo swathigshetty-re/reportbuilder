@@ -57,27 +57,32 @@ function addReport(){
 
     let reports = JSON.parse(localStorage.getItem("reports")) || [];
 
-    const name = document.getElementById("name").value.trim();
-    const role = document.getElementById("role").value.trim();
+    const loggedUser = localStorage.getItem("loggedInUser");
+
+    if(!loggedUser){
+        alert("Please login first");
+        window.location.href = "login.html";
+        return;
+    }
+
     const project = document.getElementById("project").value.trim();
     const comment = document.getElementById("comment").value.trim();
     const status = document.getElementById("status").value;
 
-    if(!name || !project){
-        alert("Please fill all required fields");
+    if(!project){
+        alert("Please enter project name");
         return;
     }
 
     reports.push({
-        title: project,          // ✅ matches dashboard
-        owner: name,             // ✅ matches dashboard
-        role: role,
+        title: project,
+        owner: loggedUser,  // 🔥 automatically from login
         comments: [{
             text: comment,
-            by: name,
+            by: loggedUser,
             date: new Date().toISOString().slice(0,10)
         }],
-        status: status           // ✅ simple string (NOT object)
+        status: status
     });
 
     localStorage.setItem("reports", JSON.stringify(reports));
@@ -87,6 +92,7 @@ function addReport(){
     window.location.href = "admin_dashboard.html";
 }
 </script>
+
 
 
 </body>

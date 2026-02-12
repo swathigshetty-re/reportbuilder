@@ -196,6 +196,12 @@ function loadTable(){
                     <option value="Completed" ${r.status==="Completed"?"selected":""}>Completed</option>
                     <option value="In Progress" ${r.status==="In Progress"?"selected":""}>In Progress</option>
                     <option value="Incomplete" ${r.status==="Incomplete"?"selected":""}>Incomplete</option>
+                    <option value="Project Created" ${r.status==="Project Created"?"selected":""}>Project Created</option>
+                    <option value="On Hold" ${r.status==="On Hold"?"selected":""}>On Hold</option>
+                    <option value="Cancelled" ${r.status==="Cancelled"?"selected":""}>Cancelled</option>
+                    <option value="Needs Review" ${r.status==="Needs Review"?"selected":""}>Needs Review</option>
+                    <option value="Approved" ${r.status==="Approved"?"selected":""}>Approved</option>
+                    <option value="Rejected" ${r.status==="Rejected"?"selected":""}>Rejected</option>
                 </select>
             </td>
             <td>
@@ -225,11 +231,17 @@ function deleteReport(index){
 /* ---------- PIE CHART ---------- */
 function loadChart(){
 
-    let completed = 0, inProgress = 0, incomplete = 0;
+    let completed = 0, inProgress = 0, incomplete = 0, onhold = 0, cancelled = 0, needsReview = 0, approved = 0, rejected = 0;
 
     reports.forEach(r => {
         if(r.status === "Completed") completed++;
         else if(r.status === "In Progress") inProgress++;
+        else if(r.status === "Project Created") incomplete++;
+        else if(r.status === "On Hold") incomplete++;
+        else if(r.status === "Cancelled") incomplete++;
+        else if(r.status === "Needs Review") incomplete++;
+        else if(r.status === "Approved") completed++;
+        else if(r.status === "Rejected") incomplete++;
         else incomplete++;
     });
 
@@ -240,10 +252,10 @@ function loadChart(){
     chart = new Chart(document.getElementById("statusChart"), {
         type: 'pie',
         data: {
-            labels: ['Completed', 'In Progress', 'Incomplete'],
+            labels: ['Completed', 'In Progress', 'Incomplete', 'On Hold', 'Cancelled', 'Needs Review', 'Approved', 'Rejected'],
             datasets: [{
-                data: [completed, inProgress, incomplete],
-                backgroundColor: ['#2ecc71', '#f1c40f', '#e74c3c']
+                data: [completed, inProgress, incomplete, onhold, cancelled, needsReview, approved, rejected, 0,0,0,0,0,0,0,0],
+                backgroundColor: ['#2ecc71', '#f1c40f', '#e74c3c', '#9b59b6', '#3498db', '#1abc9c', '#e67e22', '#c0392b']
             }]
         },
         options: {
