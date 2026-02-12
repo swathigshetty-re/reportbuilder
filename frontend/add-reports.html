@@ -54,33 +54,40 @@ button{
 
 <script>
 function addReport(){
+
     let reports = JSON.parse(localStorage.getItem("reports")) || [];
 
+    const name = document.getElementById("name").value.trim();
+    const role = document.getElementById("role").value.trim();
+    const project = document.getElementById("project").value.trim();
+    const comment = document.getElementById("comment").value.trim();
+    const status = document.getElementById("status").value;
+
+    if(!name || !project){
+        alert("Please fill all required fields");
+        return;
+    }
+
     reports.push({
-        name: name.value,
-        role: role.value,
-        project: project.value,
-        comments: [
-            {
-                text: comment.value,
-                by: name.value,
-                date: new Date().toISOString().slice(0,10)
-            }
-        ],
-        status: {
-            text: status.value,
+        title: project,          // ✅ matches dashboard
+        owner: name,             // ✅ matches dashboard
+        role: role,
+        comments: [{
+            text: comment,
+            by: name,
             date: new Date().toISOString().slice(0,10)
-        }
+        }],
+        status: status           // ✅ simple string (NOT object)
     });
 
     localStorage.setItem("reports", JSON.stringify(reports));
+
     alert("Report Added Successfully");
 
-
-    // 🔹 ADD THIS LINE
     window.location.href = "admin_dashboard.html";
 }
 </script>
+
 
 </body>
 </html>

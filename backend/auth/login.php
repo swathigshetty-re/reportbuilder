@@ -1,47 +1,42 @@
 <?php
-require "../backend/config/db.php";   // Adjust path if needed
-
 header("Content-Type: application/json");
+require_once "../config/db.php";
 
-// Get JSON input
-$data = json_decode(file_get_contents("php://input"));
+$data = json_decode(file_get_contents("php://input"), true);
 
-// Check if data received
-if (!$data || !isset($data->username) || !isset($data->password)) {
-    echo json_encode(["status" => "invalid request"]);
+$name     = trim($data['username'] ?? '');
+$password = trim($data['password'] ?? '');
+
+if (empty($name) || empty($password)) {
+    echo json_encode(["status" => "error"]);
     exit;
 }
 
-$username = trim($data->username);
-$password = trim($data->password);
+$stmt = $conn->prepare("SELECT user_id, password, role FROM users WHERE name = ?");
+$stmt->bind_param("s", $name);
+$stmt->execute();
+$result = $stmt->get_result();
 
-try {
+if ($result->num_rows === 1) {
 
-    // Prepare statement
-    $stmt = $conn->prepare("SELECT user_id, username, password, role FROM users WHERE username = ?");
-    $stmt->execute([$username]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $user = $result->fetch_assoc();
 
-    // Verify user and password
-    if ($user && password_verify($password, $user['password'])) {
+    if (password_verify($password, $user['password'])) {
 
         echo json_encode([
-            "status" => "success",
+            "status"  => "success",
             "user_id" => $user['user_id'],
-            "role" => $user['role']
+            "role"    => $user['role']
         ]);
 
     } else {
-        echo json_encode([
-            "status" => "invalid credentials"
-        ]);
+        echo json_encode(["status" => "error"]);
     }
 
-} catch (PDOException $e) {
-
-    echo json_encode([
-        "status" => "error",
-        "message" => $e->getMessage()
-    ]);
+} else {
+    echo json_encode(["status" => "error"]);
 }
+
+$stmt->close();
+$conn->close();
 ?>

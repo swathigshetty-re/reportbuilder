@@ -777,6 +777,12 @@ ALTER TABLE `viewer_reports`
 --
 -- Database: `test`
 --
+ALTER TABLE users 
+MODIFY user_id INT(11) NOT NULL AUTO_INCREMENT,
+ADD PRIMARY KEY (user_id);
+--
+-- Constraints for dumped tables
+--
 CREATE DATABASE IF NOT EXISTS `test` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 USE `test`;
 COMMIT;

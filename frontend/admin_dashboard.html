@@ -161,9 +161,14 @@ let chart = null;
 
 /* ---------- LOAD DASHBOARD ---------- */
 function loadDashboard(){
+
     document.getElementById("totalReports").innerText = reports.length;
+
     document.getElementById("latestProject").innerText =
-        reports.length ? reports[reports.length - 1].title : "No reports";
+        reports.length ? (reports[reports.length - 1].title || "—") : "No reports";
+
+    let admin = localStorage.getItem("loggedInUser") || "Admin";
+    document.getElementById("adminName").innerText = admin;
 
     loadTable();
     loadChart();
@@ -174,12 +179,18 @@ function loadTable(){
     const table = document.getElementById("reportTable");
     table.innerHTML = "";
 
+    if(reports.length === 0){
+        table.innerHTML = `<tr><td colspan="5">No reports available</td></tr>`;
+        return;
+    }
+
     reports.forEach((r, i) => {
+
         table.innerHTML += `
         <tr>
             <td>${i + 1}</td>
-            <td>${r.title}</td>
-            <td>${r.owner}</td>
+            <td>${r.title || "-"}</td>
+            <td>${r.owner || "-"}</td>
             <td>
                 <select onchange="updateStatus(${i}, this.value)">
                     <option value="Completed" ${r.status==="Completed"?"selected":""}>Completed</option>
@@ -201,22 +212,19 @@ function updateStatus(index, value){
     loadChart();
 }
 
-/* ---------- DELETE REPORT (FIXED) ---------- */
+/* ---------- DELETE REPORT ---------- */
 function deleteReport(index){
     if(!confirm("Are you sure you want to delete this report?")) return;
 
-    // 1️⃣ Remove report
     reports.splice(index, 1);
-
-    // 2️⃣ Save updated list
     localStorage.setItem("reports", JSON.stringify(reports));
 
-    // 3️⃣ Reload dashboard completely
     loadDashboard();
 }
 
 /* ---------- PIE CHART ---------- */
 function loadChart(){
+
     let completed = 0, inProgress = 0, incomplete = 0;
 
     reports.forEach(r => {
@@ -225,7 +233,6 @@ function loadChart(){
         else incomplete++;
     });
 
-    // Destroy old chart before creating new one
     if(chart){
         chart.destroy();
     }
@@ -243,12 +250,11 @@ function loadChart(){
             responsive: true
         }
     });
-	let admin = localStorage.getItem("loggedInUser")|| "Admin";
-	document.getElementById("adminName").innerText = admin;
 }
 
 /* ---------- INIT ---------- */
 loadDashboard();
 </script>
+
 </body>
 </html>
