@@ -78,7 +78,7 @@ body {
 <div class="login-box">
     <h2 id="loginTitle">Login</h2>
 
-    <input type="email" id="email" placeholder="Email">
+    <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">
 
     <button onclick="login()">Login</button>
@@ -110,22 +110,22 @@ else if (role === "viewer") {
 
 async function login() {
 
-    let email = document.getElementById("email").value.trim();
+    let username = document.getElementById("username").value.trim();
     let password = document.getElementById("password").value.trim();
 
-    if (email === "" || password === "") {
-        alert("Please enter email and password");
+    if (username === "" || password === "") {
+        alert("Please enter username and password");
         return;
     }
 
     try {
-        const response = await fetch("login.php", {
+        const response = await fetch("../backend/auth/login.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                email: email,
+                username: username,
                 password: password
             })
         });
