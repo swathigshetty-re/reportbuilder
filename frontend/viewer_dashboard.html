@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Viewer Dashboard</title>
+    <link rel="stylesheet" href="viewer_style.css">
+</head>
+<body>
+
+<div class="dashboard">
+    <h1>Viewer Report Dashboard</h1>
+
+    <div class="card">
+        <h2>User Details</h2>
+        <p><strong>Name:</strong> <span id="name"></span></p>
+        <p><strong>Role:</strong> <span id="role"></span></p>
+        <p><strong>Project:</strong> <span id="project"></span></p>
+    </div>
+
+    <div class="card">
+        <h2>Comment History</h2>
+        <div id="comments" class="comments-box"></div>
+    </div>
+
+    <div class="card status-card">
+        <h2>Status</h2>
+        <p id="status"></p>
+    </div>
+</div>
+
+<script src="viewer_report.js"></script>
+</body>
+</html>

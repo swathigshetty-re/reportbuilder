@@ -111,7 +111,6 @@ async function register() {
             })
         });
 
-        // Check if response is OK
         if (!response.ok) {
             throw new Error("Network response was not ok");
         }
@@ -119,20 +118,26 @@ async function register() {
         const result = await response.json();
 
         if (result.status === "success") {
-            message.style.color = "green";
-            message.innerText = "Registration successful!";
-            
-            setTimeout(() => {
-                window.location.href = "login.html?role=" + role;
-            }, 1000);
 
-        } else if (result.status === "exists") {
-            message.innerText = "Username already exists";
+            // Store user details
+            localStorage.setItem("user_id", result.user_id);
+            localStorage.setItem("role", result.role);
 
-        } else if (result.status === "empty") {
+            // Redirect directly to dashboard
+            if (result.role === "admin") {
+                window.location.href = "admin_dashboard.html";
+            } else {
+                window.location.href = "viewer_dashboard.html";
+            }
+
+        } 
+        else if (result.status === "exists") {
+            message.innerText = "User ID already exists";
+        } 
+        else if (result.status === "empty") {
             message.innerText = "Please fill all fields";
-
-        } else {
+        } 
+        else {
             message.innerText = "Registration failed";
         }
 
@@ -141,6 +146,8 @@ async function register() {
         console.error(error);
     }
 }
+
+
 
 </script>
 
