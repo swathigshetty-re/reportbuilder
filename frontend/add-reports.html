@@ -37,23 +37,22 @@ button{
 <div class="card">
 <h2>Add Report</h2>
 
-<input id="name" placeholder="User Name">
-<input id="role" placeholder="Role">
 <input id="project" placeholder="Project Name">
 
 <textarea id="comment" placeholder="Initial Comment"></textarea>
 
 <select id="status">
-    <option>Completed</option>
-    <option>In Progress</option>
-    <option>Project Created</option>
-    <option>On Hold</option>
-    <option>Cancelled</option>
-    <option>Needs Review</option>
-    <option>Approved</option>
-    <option>Rejected</option>
-    <option>incomplete</option>
+    <option value="Completed">Completed</option>
+    <option value="In Progress">In Progress</option>
+    <option value="Project Created">Project Created</option>
+    <option value="On Hold">On Hold</option>
+    <option value="Cancelled">Cancelled</option>
+    <option value="Needs Review">Needs Review</option>
+    <option value="Approved">Approved</option>
+    <option value="Rejected">Rejected</option>
+    <option value="Incomplete">Incomplete</option>
 </select>
+
 
 <button onclick="addReport()">Add Report</button>
 </div>
@@ -61,41 +60,29 @@ button{
 <script>
 function addReport(){
 
-    let reports = JSON.parse(localStorage.getItem("reports")) || [];
-
-    const loggedUser = localStorage.getItem("loggedInUser");
-
-    if(!loggedUser){
-        alert("Please login first");
-        window.location.href = "login.html";
-        return;
-    }
-
-    const project = document.getElementById("project").value.trim();
-    const comment = document.getElementById("comment").value.trim();
+    const project = document.getElementById("project").value;
+    const comment = document.getElementById("comment").value;
     const status = document.getElementById("status").value;
 
-    if(!project){
-        alert("Please enter project name");
-        return;
-    }
-
-    reports.push({
-        title: project,
-        owner: loggedUser,  // 🔥 automatically from login
-        comments: [{
-            text: comment,
-            by: loggedUser,
-            date: new Date().toISOString().slice(0,10)
-        }],
-        status: status
+    fetch("../backend/reports/add.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            title: project,
+            description: comment,
+            status: status,
+            created_by: "Admin",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("Report Added Successfully");
+        window.location.href = "admin_dashboard.html";
     });
-
-    localStorage.setItem("reports", JSON.stringify(reports));
-
-    alert("Report Added Successfully");
-
-    window.location.href = "admin_dashboard.html";
 }
 </script>
 
