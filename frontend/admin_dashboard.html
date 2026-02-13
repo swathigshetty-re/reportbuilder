@@ -140,88 +140,47 @@ select{
     <div class="section">
         <h3>All Reports</h3>
         <table>
-            <thead>
-                <tr>
-                    <th>Sl.No</th>
-                    <th>Project</th>
-                    <th>User</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="reportTable"></tbody>
-        </table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Project</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody">
+        <!-- Data will load here -->
+    </tbody>
+</table>
     </div>
 
 </div>
 
 <script>
-let reports = [];
-let chart = null;
+fetch("../backend/reports/get_reports.php")
+.then(response => response.json())
+.then(data => {
 
-function loadDashboard(){
+    const tableBody = document.getElementById("tableBody");
+    tableBody.innerHTML = "";
 
-    fetch("../backend/reports/list.php")
-    .then(res => res.json())
-    .then(data => {
-
-        reports = data;
-
-        document.getElementById("totalReports").innerText = reports.length;
-
-        document.getElementById("latestProject").innerText =
-            reports.length ? reports[0].titles : "No reports";
-
-        loadTable();
-        loadChart();
-    });
-}
-
-function loadTable(){
-    const table = document.getElementById("reportTable");
-    table.innerHTML = "";
-
-    if(reports.length === 0){
-        table.innerHTML = `<tr><td colspan="5">No reports available</td></tr>`;
-        return;
-    }
-
-    reports.forEach((r, i) => {
-        table.innerHTML += `
-        <tr>
-            <td>${i + 1}</td>
-            <td>${r.titles}</td>
-            <td>${r.created_by}</td>
-            <td>${r.status}</td>
-            <td>-</td>
-        </tr>`;
-    });
-}
-
-function loadChart(){
-    let completed = 0, progress = 0, others = 0;
-
-    reports.forEach(r => {
-        if(r.status === "Completed") completed++;
-        else if(r.status === "In Progress") progress++;
-        else others++;
+    data.forEach(report => {
+        tableBody.innerHTML += `
+            <tr>
+                <td>${report.id}</td>
+                <td>${report.title}</td>
+                <td>${report.description}</td>
+                <td>${report.status}</td>
+                <td>${report.created_at}</td>
+            </tr>
+        `;
     });
 
-    if(chart) chart.destroy();
-
-    chart = new Chart(document.getElementById("statusChart"), {
-        type: 'pie',
-        data: {
-            labels: ['Completed', 'In Progress', 'Others'],
-            datasets: [{
-                data: [completed, progress, others]
-            }]
-        }
-    });
-}
-
-loadDashboard();
+});
 </script>
+
+
 
 
 </body>

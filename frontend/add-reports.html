@@ -28,6 +28,12 @@ button{
     background:#3498db;
     color:white;
     border:none;
+    cursor:pointer;
+    border-radius:4px;
+}
+
+button:hover{
+    background:#2980b9;
 }
 </style>
 </head>
@@ -37,13 +43,16 @@ button{
 <div class="card">
 <h2>Add Report</h2>
 
-<input id="project" placeholder="Project Name">
+<form action="add.php" method="POST">
 
-<textarea id="comment" placeholder="Initial Comment"></textarea>
+<input type="text" name="title" placeholder="Project Name" required>
 
-<select id="status">
-    <option value="Completed">Completed</option>
+<textarea name="description" placeholder="Initial Comment"></textarea>
+
+<select name="status" required>
+    <option value="Pending">Pending</option>
     <option value="In Progress">In Progress</option>
+    <option value="Completed">Completed</option>
     <option value="Project Created">Project Created</option>
     <option value="On Hold">On Hold</option>
     <option value="Cancelled">Cancelled</option>
@@ -53,40 +62,10 @@ button{
     <option value="Incomplete">Incomplete</option>
 </select>
 
+<button type="submit">Add Report</button>
 
-<button onclick="addReport()">Add Report</button>
+</form>
 </div>
-
-<script>
-function addReport(){
-
-    const project = document.getElementById("project").value;
-    const comment = document.getElementById("comment").value;
-    const status = document.getElementById("status").value;
-
-    fetch("../backend/reports/add.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            title: project,
-            description: comment,
-            status: status,
-            created_by: "Admin",
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert("Report Added Successfully");
-        window.location.href = "admin_dashboard.html";
-    });
-}
-</script>
-
-
 
 </body>
 </html>
