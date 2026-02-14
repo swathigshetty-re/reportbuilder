@@ -28,35 +28,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Temporary user id
     $created_by = 1;
 
-    // Insert query
-    $sql = "INSERT INTO reports (title, description, status, created_by) 
-            VALUES (?, ?, ?, ?)";
+    // Prepare SQL statement
+$stmt = $conn->prepare("INSERT INTO reports (title, description, status, created_by) VALUES (?, ?, ?, ?)");
 
-    $stmt = $conn->prepare($sql);
-    
-    if (!$stmt) {
-        die("Prepare failed: " . $conn->error);
-    }
-    
-    $stmt->bind_param("sssi", $title, $description, $status, $created_by);
+$stmt->bind_param("sssi", $title, $description, $status, $created_by);
 
-    if ($stmt->execute()) {
-        echo "Record inserted successfully!<br>"; // Debug line
-        $stmt->close();
-        $conn->close();
-        
-        echo "Redirecting to admin dashboard..."; // Debug line
-        // Uncomment the line below once debugging is done
-        // header("Location: admin_dashboard.html");
-        // exit();
-    } else {
-        echo "Execute Error: " . $stmt->error;
-    }
-
-    $stmt->close();
+// Execute query
+if ($stmt->execute()) {
+    echo "Report added successfully!";
 } else {
-    echo "Form not submitted via POST";
+    echo "Error: " . $stmt->error;
 }
 
+$stmt->close();
 $conn->close();
+}
 ?>
