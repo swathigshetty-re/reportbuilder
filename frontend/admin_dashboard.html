@@ -144,10 +144,9 @@ select{
         <tr>
             <th>ID</th>
             <th>Project</th>
-            <th>Description</th>
             <th>Status</th>
-            <th>Created By</th>
-            <th>Created At</th>
+            <th>Action</th>
+
 
         </tr>
     </thead>
@@ -160,7 +159,40 @@ select{
 </div>
 
 <script>
-    fetch("/reportbuilder/backend/auth/get_user.php")
+    
+function deleteReport(reportId) {
+
+    if (!confirm("Are you sure you want to delete this report?")) {
+        return;
+    }
+
+    fetch("/reportbuilder/backend/reports/delete_report.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            report_id: reportId
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("Report deleted successfully");
+            location.reload();
+        } else {
+            alert("Delete failed");
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        alert("Server error");
+    });
+}
+
+
+// 🔹 Load Logged User
+fetch("/reportbuilder/backend/auth/get_user.php")
 .then(res => res.json())
 .then(data => {
     if(data.status === "success"){
@@ -170,6 +202,8 @@ select{
     }
 });
 
+
+// 🔹 Load Reports
 fetch("/reportbuilder/backend/reports/get_reports.php")
 .then(response => response.json())
 .then(data => {
@@ -177,42 +211,81 @@ fetch("/reportbuilder/backend/reports/get_reports.php")
     let table = document.getElementById("reportTableBody");
     table.innerHTML = "";
 
-    data.forEach(report => {
-        table.innerHTML += `
-            <tr>
-                <td>${report.report_id}</td>
-                <td>${report.title}</td>
-                <td>${report.description}</td>
-                <td>${report.status}</td>
-               <td>${report.created_by_name}</td>
-               <td>${report.created_at}</td>
+    if (!Array.isArray(data)) {
+        console.log("Unexpected response:", data);
+        return;
+    }
 
-            </tr>
-        `;
-    });
+    // 🔹 Update Summary Cards
+    document.getElementById("totalReports").innerText = data.length;
+
+    if (data.length > 0) {
+        document.getElementById("latestProject").innerText = data[0].title;
+    }
+
+    // 🔹 Populate Table
+    data.forEach((report, index) => {
+    table.innerHTML += `
+        <tr>
+            <td>${index + 1}</td>
+            <td>${report.title}</td>
+            <td>${report.status}</td>
+            <td>
+                <button onclick="deleteReport(${report.report_id})" 
+                        style="background:#e74c3c;color:white;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;">
+                    Delete
+                </button>
+            </td>
+        </tr>
+    `;
+});
+
+
+    // 🔹 PIE CHART LOGIC
     let statusCount = {};
 
-data.forEach(report => {
-    statusCount[report.status] = (statusCount[report.status] || 0) + 1;
-});
+    data.forEach(report => {
+        statusCount[report.status] = (statusCount[report.status] || 0) + 1;
+    });
 
-let labels = Object.keys(statusCount);
-let values = Object.values(statusCount);
+    let labels = Object.keys(statusCount);
+    let values = Object.values(statusCount);
 
-new Chart(document.getElementById("statusChart"), {
-    type: "pie",
-    data: {
-        labels: labels,
-        datasets: [{
-            data: values
-        }]
+    if (labels.length === 0) return;
+
+    // Destroy previous chart if exists
+    if (window.statusChartInstance) {
+        window.statusChartInstance.destroy();
     }
-});
 
+    window.statusChartInstance = new Chart(
+        document.getElementById("statusChart"),
+        {
+            type: "pie",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: [
+                        "#3498db",
+                        "#2ecc71",
+                        "#f1c40f",
+                        "#e74c3c",
+                        "#9b59b6",
+                        "#1abc9c"
+                    ]
+                }]
+            }
+        }
+    );
 
+})
+.catch(error => {
+    console.error("Error loading reports:", error);
 });
 
 </script>
+
 
 
 

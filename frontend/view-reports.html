@@ -100,6 +100,7 @@ th{
             <th>Report Title</th>
             <th>Description</th>
             <th>Progress</th>
+            <th>View</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -111,42 +112,107 @@ th{
 </div>
 
 <script>
-let reports = JSON.parse(localStorage.getItem("reports")) || [];
+
 let table = document.getElementById("reportTable");
 
-function loadReports(){
-    table.innerHTML = "";
-    reports.forEach((r, index) => {
-        table.innerHTML += `
-        <tr>
-            <td>${index + 1}</td>
-            <td>${r.title}</td>
-            <td>${r.desc}</td>
-            <td>
-                <div class="progress-box">
-                    <div class="progress-bar" style="width:${r.progress}%">
-                        ${r.progress}%
+function loadReports() {
+
+    fetch("/reportbuilder/backend/reports/get_reports.php")
+    .then(response => response.json())
+    .then(data => {
+
+        table.innerHTML = "";
+
+        if (!Array.isArray(data)) {
+            console.log("Unexpected response:", data);
+            return;
+        }
+
+        data.forEach((report, index) => {
+
+            // Convert status to progress %
+           data.forEach((report, index) => {
+
+    table.innerHTML += `
+    <tr>
+        <td>${index + 1}</td>
+        <td>${report.title}</td>
+        <td>${report.description}</td>
+        <td>${report.status}</td>
+        <td>
+            <button onclick="viewReport(${report.report_id})"
+                style="background:#3498db;color:white;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;margin-right:5px;">
+                View
+            </button></td>
+        <td>
+            <button class="delete-btn" onclick="deleteReport(${report.report_id})">
+                Delete
+            </button>
+        </td>
+    </tr>
+    `;
+});
+
+
+            table.innerHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${report.title}</td>
+                <td>${report.description}</td>
+                <td>
+                    <div class="progress-box">
+                        <div class="progress-bar" style="width:${progress}%">
+                            ${progress}%
+                        </div>
                     </div>
-                </div>
-            </td>
-            <td>
-                <button class="delete-btn" onclick="deleteReport(${index})">Delete</button>
-            </td>
-        </tr>
-        `;
+                </td>
+                <td>
+                    <button class="delete-btn" onclick="deleteReport(${report.report_id})">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+            `;
+        });
+
+    })
+    .catch(error => {
+        console.error("Error loading reports:", error);
     });
 }
 
-function deleteReport(index){
+function deleteReport(reportId){
+
     if(confirm("Are you sure you want to delete this report?")){
-        reports.splice(index,1);
-        localStorage.setItem("reports", JSON.stringify(reports));
-        loadReports();
+
+        fetch("/reportbuilder/backend/reports/delete_report.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                report_id: reportId
+            })
+        })
+        .then(res => res.json())
+        .then(result => {
+            if(result.status === "success"){
+                loadReports();
+            } else {
+                alert("Delete failed");
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert("Server error");
+        });
     }
 }
 
 loadReports();
+
 </script>
+
 
 </body>
 </html>
