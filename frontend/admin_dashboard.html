@@ -146,7 +146,9 @@ select{
             <th>Project</th>
             <th>Description</th>
             <th>Status</th>
+            <th>Created By</th>
             <th>Created At</th>
+
         </tr>
     </thead>
     <tbody id="reportTableBody">
@@ -182,7 +184,9 @@ fetch("/reportbuilder/backend/reports/get_reports.php")
                 <td>${report.title}</td>
                 <td>${report.description}</td>
                 <td>${report.status}</td>
-                <td>${report.created_at_name}</td>
+               <td>${report.created_by_name}</td>
+               <td>${report.created_at}</td>
+
             </tr>
         `;
     });

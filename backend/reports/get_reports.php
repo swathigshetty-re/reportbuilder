@@ -1,4 +1,5 @@
 <?php
+session_start();
 header("Content-Type: application/json");
 require_once "../config/db.php";
 
@@ -16,6 +17,14 @@ ORDER BY r.report_id DESC
 ";
 
 $result = $conn->query($sql);
+
+if (!$result) {
+    echo json_encode([
+        "status" => "error",
+        "message" => $conn->error
+    ]);
+    exit;
+}
 
 $reports = [];
 
