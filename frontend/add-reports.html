@@ -16,6 +16,7 @@ body{
     border-radius:8px;
     max-width:500px;
     margin:auto;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
 input, textarea, select, button{
@@ -29,6 +30,15 @@ button{
     color:white;
     border:none;
     cursor:pointer;
+}
+
+button:hover{
+    background:#2980b9;
+}
+
+#message{
+    margin-top:10px;
+    font-weight:bold;
 }
 </style>
 </head>
@@ -75,30 +85,28 @@ document.getElementById("reportForm").addEventListener("submit", function(e){
     let status = document.getElementById("status").value;
 
     fetch("/reportbuilder/backend/reports/add.php", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        title: title,
-        description: description,
-        status: status
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            title: title,
+            description: description,
+            status: status
+        })
     })
-})
-.then(response => response.json())
-.then(data => {
-    if (data.status === "success") {
-        document.getElementById("message").innerText = data.message;
-        document.getElementById("reportForm").reset();
-    } else {
-        document.getElementById("message").innerText = data.message;
-    }
-})
-.catch(error => {
-    document.getElementById("message").innerText = "Error: " + error;
-});
-
-
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            document.getElementById("message").innerText = data.message;
+            document.getElementById("reportForm").reset();
+        } else {
+            document.getElementById("message").innerText = data.message;
+        }
+    })
+    .catch(error => {
+        document.getElementById("message").innerText = "Error: " + error;
+    });
 });
 </script>
 

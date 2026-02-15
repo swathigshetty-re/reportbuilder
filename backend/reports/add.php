@@ -20,14 +20,11 @@ $stmt = $conn->prepare("INSERT INTO reports (title, description, status) VALUES 
 $stmt->bind_param("sss", $title, $description, $status);
 
 if ($stmt->execute()) {
-
     echo json_encode([
         "status"  => "success",
         "message" => "Report added successfully"
     ]);
-
 } else {
-
     echo json_encode([
         "status"  => "error",
         "message" => $conn->error
@@ -36,4 +33,3 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
-?>
