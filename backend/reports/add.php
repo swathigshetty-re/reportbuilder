@@ -1,36 +1,63 @@
 <?php
-header("Content-Type: application/json");
-require_once "../config/db.php";
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-$data = json_decode(file_get_contents("php://input"), true);
+session_start();
 
-$title       = trim($data['title'] ?? '');
-$description = trim($data['description'] ?? '');
-$status      = trim($data['status'] ?? '');
+// Database connection
+$conn = new mysqli("localhost", "root", "", "report_system");
 
-if (empty($title) || empty($status)) {
-    echo json_encode(["status" => "error", "message" => "Required fields missing"]);
-    exit;
+if ($conn->connect_error) {
+    die("Connection Failed: " . $conn->connect_error);
 }
 
-$stmt = $conn->prepare("INSERT INTO reports (title, description, status) VALUES (?, ?, ?)");
-$stmt->bind_param("sss", $title, $description, $status);
+// Check if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
+    echo "Form submitted!<br>"; // Debug line
+    
+    // Get form data and check if they exist
+    $title = isset($_POST['title']) ? $_POST['title'] : '';
+    $description = isset($_POST['description']) ? $_POST['description'] : '';
+    $status = isset($_POST['status']) ? $_POST['status'] : '';
+    
+    echo "Title: $title<br>"; // Debug line
+    echo "Description: $description<br>"; // Debug line
+    echo "Status: $status<br>"; // Debug line
 
-if ($stmt->execute()) {
+    // Temporary user id
+    $created_by = 1;
 
-    echo json_encode([
-        "status"  => "success",
-        "message" => "Report added successfully"
-    ]);
+    // Insert query
+    $sql = "INSERT INTO reports (title, description, status, created_by) 
+            VALUES (?, ?, ?, ?)";
 
+    $stmt = $conn->prepare($sql);
+    
+    if (!$stmt) {
+        die("Prepare failed: " . $conn->error);
+    }
+    
+    $stmt->bind_param("sssi", $title, $description, $status, $created_by);
+
+    if ($stmt->execute()) {
+        echo "Record inserted successfully!<br>"; // Debug line
+        $stmt->close();
+        $conn->close();
+        
+        echo "Redirecting to admin dashboard..."; // Debug line
+        // Uncomment the line below once debugging is done
+        // header("Location: admin_dashboard.html");
+        // exit();
+    } else {
+        echo "Execute Error: " . $stmt->error;
+    }
+
+    $stmt->close();
 } else {
-
-    echo json_encode([
-        "status"  => "error",
-        "message" => "Database error"
-    ]);
+    echo "Form not submitted via POST";
 }
 
-$stmt->close();
 $conn->close();
+}
 ?>
