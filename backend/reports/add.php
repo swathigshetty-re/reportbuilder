@@ -33,4 +33,8 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
+<<<<<<< HEAD
+=======
+}
+>>>>>>> 2030298f3d168baa69ae18f4f960b43dc2f835f3
 ?>
