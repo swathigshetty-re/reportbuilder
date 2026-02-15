@@ -77,6 +77,7 @@ document.getElementById("roleTitle").innerText =
 document.getElementById("loginLink").href =
     "login.html?role=" + role;
 
+
 async function register() {
 
     const username = document.getElementById("username").value.trim();
@@ -99,7 +100,8 @@ async function register() {
     }
 
     try {
-        const response = await fetch("../backend/auth/register.php", {
+
+        const response = await fetch("/reportbuilder/backend/auth/register.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -111,19 +113,16 @@ async function register() {
             })
         });
 
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-
         const result = await response.json();
 
         if (result.status === "success") {
 
-            // Store user details
+            // Store user info
             localStorage.setItem("user_id", result.user_id);
             localStorage.setItem("role", result.role);
+            localStorage.setItem("name", username);
 
-            // Redirect directly to dashboard
+            // Redirect based on role
             if (result.role === "admin") {
                 window.location.href = "admin_dashboard.html";
             } else {
@@ -132,10 +131,7 @@ async function register() {
 
         } 
         else if (result.status === "exists") {
-            message.innerText = "User ID already exists";
-        } 
-        else if (result.status === "empty") {
-            message.innerText = "Please fill all fields";
+            message.innerText = "User already registered";
         } 
         else {
             message.innerText = "Registration failed";
@@ -146,8 +142,6 @@ async function register() {
         console.error(error);
     }
 }
-
-
 
 </script>
 

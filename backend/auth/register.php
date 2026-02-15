@@ -1,4 +1,5 @@
 <?php
+session_start();
 header("Content-Type: application/json");
 require_once "../config/db.php";
 
@@ -38,24 +39,35 @@ $check->close();
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
 // Insert new user
-$stmt = $conn->prepare("INSERT INTO users (role, name, password, is_first_login) VALUES (?, ?, ?, 1)");
+$stmt = $conn->prepare(
+    "INSERT INTO users (role, name, password, is_first_login) 
+     VALUES (?, ?, ?, 1)"
+);
+
 $stmt->bind_param("sss", $role, $name, $hashedPassword);
 
 if ($stmt->execute()) {
 
+    $newUserId = $stmt->insert_id;
+
+    // 🔥 Auto login after register
+    $_SESSION['user_id'] = $newUserId;
+    $_SESSION['name']    = $name;
+    $_SESSION['role']    = $role;
+
     echo json_encode([
-        "status" => "success",
-        "user_id" => $stmt->insert_id,
-        "role" => $role
+        "status"  => "success",
+        "user_id" => $newUserId,
+        "role"    => $role
     ]);
 
 } else {
+
     echo json_encode([
-        "status" => "error",
+        "status"  => "error",
         "message" => $conn->error
     ]);
 }
 
 $stmt->close();
 $conn->close();
-?>
