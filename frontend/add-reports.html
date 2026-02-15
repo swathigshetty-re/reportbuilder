@@ -74,24 +74,30 @@ document.getElementById("reportForm").addEventListener("submit", function(e){
     let description = document.getElementById("description").value;
     let status = document.getElementById("status").value;
 
-    fetch("../backend/reports/add.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            title: title,
-            description: description,
-            status: status
-        })
+    fetch("/reportbuilder/backend/reports/add.php", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        title: title,
+        description: description,
+        status: status
     })
-    .then(response => response.json())
-    .then(data => {
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === "success") {
         document.getElementById("message").innerText = data.message;
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
+        document.getElementById("reportForm").reset();
+    } else {
+        document.getElementById("message").innerText = data.message;
+    }
+})
+.catch(error => {
+    document.getElementById("message").innerText = "Error: " + error;
+});
+
 
 });
 </script>
