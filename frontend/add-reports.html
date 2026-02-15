@@ -99,7 +99,7 @@ document.getElementById("reportForm").addEventListener("submit", function(e){
     .then(data => {
     if (data.status === "success") {
         alert("Report added successfully!");
-        window.location.href = "dashboard.html";
+        window.location.href = "admin_dashboard.html";
     } else {
         document.getElementById("message").innerText = data.message;
     }
