@@ -97,13 +97,14 @@ document.getElementById("reportForm").addEventListener("submit", function(e){
     })
     .then(response => response.json())
     .then(data => {
-        if (data.status === "success") {
-            document.getElementById("message").innerText = data.message;
-            document.getElementById("reportForm").reset();
-        } else {
-            document.getElementById("message").innerText = data.message;
-        }
-    })
+    if (data.status === "success") {
+        alert("Report added successfully!");
+        window.location.href = "dashboard.html";
+    } else {
+        document.getElementById("message").innerText = data.message;
+    }
+})
+
     .catch(error => {
         document.getElementById("message").innerText = "Error: " + error;
     });
