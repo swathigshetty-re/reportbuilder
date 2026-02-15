@@ -16,8 +16,14 @@ if (empty($title) || empty($status)) {
     exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO reports (title, description, status) VALUES (?, ?, ?)");
-$stmt->bind_param("sss", $title, $description, $status);
+$created_by = 1; // make sure user_id = 1 exists in users table
+
+$stmt = $conn->prepare(
+    "INSERT INTO reports (title, description, status, created_by) VALUES (?, ?, ?, ?)"
+);
+
+$stmt->bind_param("sssi", $title, $description, $status, $created_by);
+
 
 if ($stmt->execute()) {
     echo json_encode([
