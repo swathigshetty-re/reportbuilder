@@ -29,8 +29,12 @@ if ($result->num_rows === 1) {
         $_SESSION['name']    = $user['name'];
         $_SESSION['role']    = $user['role'];
 
+        // 🔥 RETURN USER DATA TO FRONTEND
         echo json_encode([
-            "status" => "success"
+            "status"  => "success",
+            "user_id" => $user['user_id'],
+            "name"    => $user['name'],
+            "role"    => $user['role']
         ]);
 
     } else {
@@ -43,3 +47,4 @@ if ($result->num_rows === 1) {
 
 $stmt->close();
 $conn->close();
+?>

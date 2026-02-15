@@ -90,36 +90,40 @@ body {
 </div>
 
 <script>
+
 const params = new URLSearchParams(window.location.search);
-const role = params.get("role");
+const roleFromUrl = params.get("role");
 
 const loginTitle = document.getElementById("loginTitle");
 const forgotLink = document.getElementById("forgotLink");
 const registerLink = document.getElementById("registerLink");
 
-if (role === "admin") {
+// Update UI based on role in URL (optional display purpose)
+if (roleFromUrl === "admin") {
     loginTitle.innerText = "Admin Login";
     forgotLink.href = "forget.html?role=admin";
     registerLink.href = "register.html?role=admin";
 } 
-else if (role === "viewer") {
+else if (roleFromUrl === "viewer") {
     loginTitle.innerText = "Viewer Login";
     forgotLink.href = "forget.html?role=viewer";
     registerLink.href = "register.html?role=viewer";
 }
+
 
 async function login() {
 
     let username = document.getElementById("username").value.trim();
     let password = document.getElementById("password").value.trim();
 
-    if (username === "" || password === "") {
+    if (!username || !password) {
         alert("Please enter username and password");
         return;
     }
 
     try {
-        const response = await fetch("../backend/auth/login.php", {
+
+        const response = await fetch("/reportbuilder/backend/auth/login.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -137,24 +141,31 @@ async function login() {
             // Store login info
             localStorage.setItem("user_id", result.user_id);
             localStorage.setItem("role", result.role);
+            localStorage.setItem("name", result.name);
 
-            // Redirect based on role
-            if (result.role === "admin") {
+            // 🔥 Redirect BASED ON DATABASE ROLE
+            if (result.role && result.role.toLowerCase() === "admin") {
                 window.location.href = "admin_dashboard.html";
-            } else {
+            } 
+            else if (result.role && result.role.toLowerCase() === "viewer") {
                 window.location.href = "viewer_dashboard.html";
+            } 
+            else {
+                alert("Unknown role. Contact admin.");
             }
 
         } else {
-            alert("Invalid credentials");
+            alert("Invalid username or password");
         }
 
     } catch (error) {
-        alert("Server error. Check login.php path.");
+        alert("Server error. Check backend path or Apache.");
         console.error(error);
     }
 }
+
 </script>
+
 
 </body>
 </html>
