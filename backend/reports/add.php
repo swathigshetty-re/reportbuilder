@@ -1,6 +1,12 @@
 <?php
+session_start();
 header("Content-Type: application/json");
 require_once "../config/db.php";
+
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(["status" => "error", "message" => "Not logged in"]);
+    exit;
+}
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -8,15 +14,10 @@ $title       = trim($data['title'] ?? '');
 $description = trim($data['description'] ?? '');
 $status      = trim($data['status'] ?? '');
 
-$created_by = 3; // 🔥 change this to EXISTING user_id
+$created_by = $_SESSION['user_id']; // 🔥 REAL USER
 
 if (empty($title) || empty($status)) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Required fields missing"
-    ]);
-    echo json_encode(["test_user_id" => $created_by]);
-
+    echo json_encode(["status" => "error", "message" => "Required fields missing"]);
     exit;
 }
 
@@ -28,15 +29,9 @@ $stmt = $conn->prepare(
 $stmt->bind_param("sssi", $title, $description, $status, $created_by);
 
 if ($stmt->execute()) {
-    echo json_encode([
-        "status"  => "success",
-        "message" => "Report added successfully"
-    ]);
+    echo json_encode(["status" => "success"]);
 } else {
-    echo json_encode([
-        "status"  => "error",
-        "message" => $conn->error
-    ]);
+    echo json_encode(["status" => "error", "message" => $conn->error]);
 }
 
 $stmt->close();

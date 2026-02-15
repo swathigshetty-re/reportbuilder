@@ -1,4 +1,5 @@
 <?php
+session_start();
 header("Content-Type: application/json");
 require_once "../config/db.php";
 
@@ -12,7 +13,7 @@ if (empty($name) || empty($password)) {
     exit;
 }
 
-$stmt = $conn->prepare("SELECT user_id, password, role FROM users WHERE name = ?");
+$stmt = $conn->prepare("SELECT user_id, name, password, role FROM users WHERE name = ?");
 $stmt->bind_param("s", $name);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -23,10 +24,13 @@ if ($result->num_rows === 1) {
 
     if (password_verify($password, $user['password'])) {
 
+        // 🔥 STORE SESSION
+        $_SESSION['user_id'] = $user['user_id'];
+        $_SESSION['name']    = $user['name'];
+        $_SESSION['role']    = $user['role'];
+
         echo json_encode([
-            "status"  => "success",
-            "user_id" => $user['user_id'],
-            "role"    => $user['role']
+            "status" => "success"
         ]);
 
     } else {
@@ -39,4 +43,3 @@ if ($result->num_rows === 1) {
 
 $stmt->close();
 $conn->close();
-?>

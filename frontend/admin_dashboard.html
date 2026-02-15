@@ -158,6 +158,16 @@ select{
 </div>
 
 <script>
+    fetch("/reportbuilder/backend/auth/get_user.php")
+.then(res => res.json())
+.then(data => {
+    if(data.status === "success"){
+        document.getElementById("adminName").innerText = data.name;
+    } else {
+        window.location.href = "login.html";
+    }
+});
+
 fetch("/reportbuilder/backend/reports/get_reports.php")
 .then(response => response.json())
 .then(data => {
