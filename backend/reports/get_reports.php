@@ -1,14 +1,14 @@
 <?php
 header("Content-Type: application/json");
+require_once "../config/db.php";
 
-include("../config/database.php");
+$sql = "SELECT report_id, title, description, status, created_at FROM reports ORDER BY created_at DESC";
 
-$sql = "SELECT * FROM reports ORDER BY id DESC";
 $result = $conn->query($sql);
 
 $reports = [];
 
-while($row = $result->fetch_assoc()){
+while ($row = $result->fetch_assoc()) {
     $reports[] = $row;
 }
 

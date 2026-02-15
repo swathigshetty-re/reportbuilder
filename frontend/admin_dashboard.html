@@ -149,7 +149,7 @@ select{
             <th>Created At</th>
         </tr>
     </thead>
-    <tbody id="tableBody">
+    <tbody id="reportTableBody">
         <!-- Data will load here -->
     </tbody>
 </table>
@@ -158,17 +158,17 @@ select{
 </div>
 
 <script>
-fetch("../backend/reports/get_reports.php")
+fetch("/reportbuilder/backend/reports/get_reports.php")
 .then(response => response.json())
 .then(data => {
 
-    const tableBody = document.getElementById("tableBody");
-    tableBody.innerHTML = "";
+    let table = document.getElementById("reportTableBody");
+    table.innerHTML = "";
 
     data.forEach(report => {
-        tableBody.innerHTML += `
+        table.innerHTML += `
             <tr>
-                <td>${report.id}</td>
+                <td>${report.report_id}</td>
                 <td>${report.title}</td>
                 <td>${report.description}</td>
                 <td>${report.status}</td>
@@ -176,8 +176,28 @@ fetch("../backend/reports/get_reports.php")
             </tr>
         `;
     });
+    let statusCount = {};
+
+data.forEach(report => {
+    statusCount[report.status] = (statusCount[report.status] || 0) + 1;
+});
+
+let labels = Object.keys(statusCount);
+let values = Object.values(statusCount);
+
+new Chart(document.getElementById("statusChart"), {
+    type: "pie",
+    data: {
+        labels: labels,
+        datasets: [{
+            data: values
+        }]
+    }
+});
+
 
 });
+
 </script>
 
 
