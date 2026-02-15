@@ -98,8 +98,8 @@ th{
         <tr>
             <th>ID</th>
             <th>Report Title</th>
-            <th>Description</th>
             <th>Progress</th>
+            <th>Created By</th>
             <th>View</th>
             <th>Action</th>
         </tr>
@@ -112,6 +112,12 @@ th{
 </div>
 
 <script>
+    function viewReport(reportId) {
+
+    // Redirect to single report page
+    window.location.href = "viewer_dashboard.html?id=" + reportId;
+}
+
 
 let table = document.getElementById("reportTable");
 
@@ -137,8 +143,9 @@ function loadReports() {
     <tr>
         <td>${index + 1}</td>
         <td>${report.title}</td>
-        <td>${report.description}</td>
         <td>${report.status}</td>
+        <td>${report.created_by_name}</td>
+        
         <td>
             <button onclick="viewReport(${report.report_id})"
                 style="background:#3498db;color:white;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;margin-right:5px;">
