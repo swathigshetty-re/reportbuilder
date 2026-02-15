@@ -8,22 +8,24 @@ $title       = trim($data['title'] ?? '');
 $description = trim($data['description'] ?? '');
 $status      = trim($data['status'] ?? '');
 
+$created_by = 3; // 🔥 change this to EXISTING user_id
+
 if (empty($title) || empty($status)) {
     echo json_encode([
         "status" => "error",
         "message" => "Required fields missing"
     ]);
+    echo json_encode(["test_user_id" => $created_by]);
+
     exit;
 }
 
-$created_by = 1; // make sure user_id = 1 exists in users table
-
 $stmt = $conn->prepare(
-    "INSERT INTO reports (title, description, status, created_by) VALUES (?, ?, ?, ?)"
+    "INSERT INTO reports (title, description, status, created_by)
+     VALUES (?, ?, ?, ?)"
 );
 
 $stmt->bind_param("sssi", $title, $description, $status, $created_by);
-
 
 if ($stmt->execute()) {
     echo json_encode([
