@@ -7,6 +7,7 @@ $sql = "
 SELECT 
     r.report_id,
     r.title,
+    r.project_role,
     r.description,
     r.status,
     u.name AS created_by_name,

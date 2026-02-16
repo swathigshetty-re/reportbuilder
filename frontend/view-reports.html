@@ -11,7 +11,6 @@ body{
     background:#f4f6f9;
 }
 
-/* Header */
 header{
     background:#2c3e50;
     color:white;
@@ -19,12 +18,18 @@ header{
     font-size:20px;
 }
 
-/* Container */
 .container{
     padding:20px;
 }
 
-/* Table */
+.search-box{
+    width:100%;
+    padding:10px;
+    margin-bottom:15px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
@@ -42,22 +47,16 @@ th{
     background:#ecf0f1;
 }
 
-/* Progress Bar */
-.progress-box{
-    background:#ddd;
-    border-radius:10px;
-    overflow:hidden;
-}
-
-.progress-bar{
-    height:18px;
-    background:#2ecc71;
+.view-btn{
+    background:#3498db;
     color:white;
-    font-size:12px;
-    text-align:center;
+    border:none;
+    padding:6px 12px;
+    border-radius:4px;
+    cursor:pointer;
+    margin-right:5px;
 }
 
-/* Buttons */
 .delete-btn{
     background:#e74c3c;
     color:white;
@@ -65,10 +64,6 @@ th{
     padding:6px 12px;
     border-radius:4px;
     cursor:pointer;
-}
-
-.delete-btn:hover{
-    background:#c0392b;
 }
 
 .back-btn{
@@ -93,113 +88,94 @@ th{
 
 <a href="admin_dashboard.html" class="back-btn">⬅ Back to Dashboard</a>
 
+<input type="text" id="searchInput" class="search-box"
+       placeholder="Search by title, status or project role...">
+
 <table>
     <thead>
         <tr>
             <th>ID</th>
-            <th>Report Title</th>
-            <th>Progress</th>
-            <th>Created By</th>
+            <th>Project</th>
+            <th>Status</th>
+            <th>Updated By</th>
             <th>View</th>
-            <th>Action</th>
+            <th>Delete</th>
         </tr>
     </thead>
-    <tbody id="reportTable">
-        <!-- Data loads here -->
-    </tbody>
+    <tbody id="reportTable"></tbody>
 </table>
 
 </div>
 
 <script>
-    function viewReport(reportId) {
 
-    // Redirect to single report page
-    window.location.href = "viewer_dashboard.html?id=" + reportId;
-}
-
-
+let allReports = [];
 let table = document.getElementById("reportTable");
 
-function loadReports() {
+// 🔹 Load Reports
+function loadReports(){
 
     fetch("/reportbuilder/backend/reports/get_reports.php")
     .then(response => response.json())
     .then(data => {
-
-        table.innerHTML = "";
 
         if (!Array.isArray(data)) {
             console.log("Unexpected response:", data);
             return;
         }
 
-        data.forEach((report, index) => {
-
-            // Convert status to progress %
-           data.forEach((report, index) => {
-
-    table.innerHTML += `
-    <tr>
-        <td>${index + 1}</td>
-        <td>${report.title}</td>
-        <td>${report.status}</td>
-        <td>${report.created_by_name}</td>
-        
-        <td>
-            <button onclick="viewReport(${report.report_id})"
-                style="background:#3498db;color:white;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;margin-right:5px;">
-                View
-            </button></td>
-        <td>
-            <button class="delete-btn" onclick="deleteReport(${report.report_id})">
-                Delete
-            </button>
-        </td>
-    </tr>
-    `;
-});
-
-
-            table.innerHTML += `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${report.title}</td>
-                <td>${report.description}</td>
-                <td>
-                    <div class="progress-box">
-                        <div class="progress-bar" style="width:${progress}%">
-                            ${progress}%
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <button class="delete-btn" onclick="deleteReport(${report.report_id})">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-            `;
-        });
-
+        allReports = data;
+        displayReports(data);
     })
     .catch(error => {
         console.error("Error loading reports:", error);
     });
 }
 
+// 🔹 Display Reports
+function displayReports(data){
+
+    table.innerHTML = "";
+
+    data.forEach((report, index) => {
+
+        table.innerHTML += `
+        <tr>
+            <td>${index + 1}</td>
+            <td>${report.title}</td>
+            <td>${report.status}</td>
+            <td>${report.created_by_name}</td>
+            <td>
+                <button class="view-btn"
+                    onclick="viewReport(${report.report_id})">
+                    View
+                </button>
+            </td>
+            <td>
+                <button class="delete-btn"
+                    onclick="deleteReport(${report.report_id})">
+                    Delete
+                </button>
+            </td>
+        </tr>
+        `;
+    });
+}
+
+// 🔹 View Report
+function viewReport(reportId){
+    window.location.href = "viewer_dashboard.html?id=" + reportId;
+}
+
+// 🔹 Delete Report
 function deleteReport(reportId){
 
     if(confirm("Are you sure you want to delete this report?")){
 
         fetch("/reportbuilder/backend/reports/delete_report.php", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                report_id: reportId
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ report_id: reportId })
         })
         .then(res => res.json())
         .then(result => {
@@ -216,10 +192,23 @@ function deleteReport(reportId){
     }
 }
 
+// 🔹 Search Filter
+document.getElementById("searchInput").addEventListener("keyup", function(){
+
+    let value = this.value.toLowerCase();
+
+    let filtered = allReports.filter(r =>
+        r.title.toLowerCase().includes(value) ||
+        r.status.toLowerCase().includes(value) ||
+        (r.project_role && r.project_role.toLowerCase().includes(value))
+    );
+
+    displayReports(filtered);
+});
+
 loadReports();
 
 </script>
-
 
 </body>
 </html>

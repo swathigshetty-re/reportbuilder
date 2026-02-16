@@ -1,24 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Viewer Dashboard</title>
-    <link rel="stylesheet" href="viewer_style.css">
+<meta charset="UTF-8">
+<title>Viewer Dashboard</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e3f2fd, #f4f6f9);
+}
+
+/* Main Container */
+.dashboard{
+    width: 80%;
+    margin: 40px auto;
+}
+
+/* Page Title */
+h1{
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+/* Card Styling */
+.card{
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+}
+
+.card:hover{
+    transform: translateY(-3px);
+}
+
+.card h2{
+    margin-top: 0;
+    border-left: 4px solid #3498db;
+    padding-left: 10px;
+    color: #34495e;
+}
+
+.card p{
+    font-size: 15px;
+    margin: 8px 0;
+    color: #555;
+}
+
+/* Comment Box */
+.comments-box{
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    min-height: 50px;
+    border: 1px solid #ddd;
+}
+
+/* Status Highlight */
+.status-card{
+    border-left: 6px solid #2ecc71;
+}
+
+#status{
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Back Button */
+.back-btn{
+    display:inline-block;
+    margin-top:20px;
+    text-decoration:none;
+    background:#3498db;
+    color:white;
+    padding:10px 18px;
+    border-radius:5px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="dashboard">
     <h1>Viewer Report Dashboard</h1>
+    
 
     <div class="card">
         <h2>User Details</h2>
         <p><strong>Name:</strong> <span id="name"></span></p>
-        <p><strong>Role:</strong> <span id="role"></span></p>
+        <p><strong>Project Role:</strong> <span id="projectRole"></span></p>
         <p><strong>Project:</strong> <span id="project"></span></p>
     </div>
 
     <div class="card">
-        <h2>Comment History</h2>
+        <h2>Comment / Description</h2>
         <div id="comments" class="comments-box"></div>
     </div>
 
@@ -26,8 +105,42 @@
         <h2>Status</h2>
         <p id="status"></p>
     </div>
+
+    <a href="view-reports.html" class="back-btn">⬅ Back to Reports</a>
 </div>
 
-<script src="viewer_report.js"></script>
+<script>
+
+// Get report ID from URL
+const params = new URLSearchParams(window.location.search);
+const reportId = params.get("id");
+
+if (!reportId) {
+    alert("No report selected");
+}
+
+// Fetch selected report
+fetch("/reportbuilder/backend/reports/get_single_report.php?id=" + reportId)
+.then(response => response.json())
+.then(report => {
+
+    if (report.status === "not_found" || report.status === "error") {
+        alert("Report not found");
+        return;
+    }
+
+    document.getElementById("name").innerText = report.created_by_name;
+   document.getElementById("projectRole").innerText = report.project_role;
+    document.getElementById("project").innerText = report.title;
+    document.getElementById("comments").innerText = report.description;
+    document.getElementById("status").innerText = report.status;
+
+})
+.catch(error => {
+    console.error("Error loading report:", error);
+});
+
+</script>
+
 </body>
 </html>

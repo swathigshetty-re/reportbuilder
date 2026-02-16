@@ -51,7 +51,7 @@ button:hover{
 <form id="reportForm">
 
 <input type="text" id="title" placeholder="Project Name" required>
-
+<input type="text" id="project_role" placeholder="Your Role in Project (Eg: Team Leader)" required>
 <textarea id="description" placeholder="Initial Comment"></textarea>
 
 <select id="status" required>
@@ -81,8 +81,10 @@ document.getElementById("reportForm").addEventListener("submit", function(e){
     e.preventDefault();
 
     let title = document.getElementById("title").value;
+    let project_role = document.getElementById("project_role").value;
     let description = document.getElementById("description").value;
     let status = document.getElementById("status").value;
+    
 
     fetch("/reportbuilder/backend/reports/add.php", {
         method: "POST",
@@ -91,6 +93,7 @@ document.getElementById("reportForm").addEventListener("submit", function(e){
         },
         body: JSON.stringify({
             title: title,
+            project_role: project_role,
             description: description,
             status: status
         })
