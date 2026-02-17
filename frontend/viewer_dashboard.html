@@ -94,8 +94,6 @@ h1{
         <p><strong>Name:</strong> <span id="name"></span></p>
         <p><strong>Project Role:</strong> <span id="projectRole"></span></p>
         <p><strong>Project:</strong> <span id="project"></span></p>
-        <p><strong>Commented By:</strong> <span id="comments"></span></strong></p>
-        <p><strong>Status:</strong> <span id="status"></span></strong></p>
     </div>
 
     <div class="card">
@@ -121,47 +119,21 @@ if (!reportId) {
     window.location.href = "view-reports.html";
 }
 
-fetch("view.php?id=" + reportId)
+fetch("/reportbuilder/backend/reports/view.php?id=" + reportId)
 .then(response => response.json())
 .then(data => {
 
-    if (data.status === "not_found" || data.status === "error") {
-        alert("Report not found");
+    if (data.status === "error") {
+        alert(data.message || "Report not found");
         return;
     }
 
-    const report = data.report;
-
-    // User Details
-    document.getElementById("name").innerText = report.created_by;
-    document.getElementById("projectRole").innerText = report.project_role;
-    document.getElementById("project").innerText = report.title;
-
-    // Comment History
-    let commentsHTML = "";
-    data.comments.forEach(comment => {
-        commentsHTML += `
-            <div style="border-left:3px solid #3498db;padding-left:10px;margin-bottom:10px;">
-                <strong>${comment.user_name}:</strong> ${comment.comment_text}
-                <div style="font-size:12px;color:gray;">${comment.comment_date}</div>
-            </div>
-        `;
-    });
-
-    document.getElementById("comments").innerHTML = commentsHTML;
-
-    // Status Updates
-    let statusHTML = "";
-    data.status_history.forEach(status => {
-        statusHTML += `
-            <div style="border-left:3px solid #2ecc71;padding-left:10px;margin-bottom:10px;">
-                <strong>Status:</strong> ${status.status}
-                <div style="font-size:12px;color:gray;">${status.updated_at}</div>
-            </div>
-        `;
-    });
-
-    document.getElementById("status").innerHTML = statusHTML;
+    // Directly use data (no data.report)
+    document.getElementById("name").innerText = data.created_by || "";
+    document.getElementById("projectRole").innerText = data.project_role || "";
+    document.getElementById("project").innerText = data.title || "";
+    document.getElementById("comments").innerText = data.description || "";
+    document.getElementById("status").innerText = data.status || "";
 
 })
 .catch(error => {
@@ -170,7 +142,6 @@ fetch("view.php?id=" + reportId)
 });
 
 </script>
-
 
 </body>
 </html>

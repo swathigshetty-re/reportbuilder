@@ -1,49 +1,28 @@
 <?php
 header("Content-Type: application/json");
+require_once "../config/db.php";
 
-$conn = new mysqli("localhost", "root", "", "report_system");
-
-if ($conn->connect_error) {
-    echo json_encode(["status" => "error"]);
+if (!$conn) {
+    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
     exit();
 }
 
 if (!isset($_GET['id'])) {
-    echo json_encode(["status" => "not_found"]);
+    echo json_encode(["status" => "error", "message" => "No ID provided"]);
     exit();
 }
 
-$report_id = intval($_GET['id']);
+$id = intval($_GET['id']);
 
-/* Get main report */
-$reportResult = $conn->query("SELECT * FROM reports WHERE report_id = $report_id");
+$sql = "SELECT * FROM reports WHERE report_id = $id";
+$result = mysqli_query($conn, $sql);
 
-if ($reportResult->num_rows == 0) {
-    echo json_encode(["status" => "not_found"]);
-    exit();
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    echo json_encode($row);
+} else {
+    echo json_encode(["status" => "error", "message" => "Report not found"]);
 }
 
-$report = $reportResult->fetch_assoc();
-
-/* Get comments */
-$commentsResult = $conn->query("SELECT * FROM comments WHERE report_id = $report_id ORDER BY comment_date DESC");
-$comments = [];
-
-while ($row = $commentsResult->fetch_assoc()) {
-    $comments[] = $row;
-}
-
-/* Get status history */
-$statusResult = $conn->query("SELECT * FROM status_history WHERE report_id = $report_id ORDER BY updated_at DESC");
-$status_history = [];
-
-while ($row = $statusResult->fetch_assoc()) {
-    $status_history[] = $row;
-}
-
-/* Final JSON */
-echo json_encode([
-    "report" => $report,
-    "comments" => $comments,
-    "status_history" => $status_history
-]);
+mysqli_close($conn);
+?>
