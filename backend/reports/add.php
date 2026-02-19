@@ -15,10 +15,6 @@ $description  = trim($data['description'] ?? '');
 $project_role = trim($data['project_role'] ?? '');
 $status       = trim($data['status'] ?? '');
 
-var_dump($status);
-exit;
-
-
 if (empty($status)) {
     $status = "Pending";
 }
@@ -26,7 +22,7 @@ if (empty($status)) {
 $created_by = (int) $_SESSION['user_id'];
 
 if (empty($title)) {
-    echo json_encode(["status" => "error", "message" => "Title is required"]);
+    echo json_encode(["status" => "error", "message" => "Title required"]);
     exit;
 }
 
@@ -34,11 +30,6 @@ $stmt = $conn->prepare(
     "INSERT INTO reports (title, project_role, description, status, created_by)
      VALUES (?, ?, ?, ?, ?)"
 );
-
-if (!$stmt) {
-    echo json_encode(["status" => "error", "message" => $conn->error]);
-    exit;
-}
 
 $stmt->bind_param("ssssi", $title, $project_role, $description, $status, $created_by);
 
