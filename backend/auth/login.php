@@ -9,7 +9,7 @@ $name     = trim($data['username'] ?? '');
 $password = trim($data['password'] ?? '');
 
 if (empty($name) || empty($password)) {
-    echo json_encode(["status" => "error"]);
+    echo json_encode(["status" => "error", "message" => "Empty fields"]);
     exit;
 }
 
@@ -24,12 +24,11 @@ if ($result->num_rows === 1) {
 
     if (password_verify($password, $user['password'])) {
 
-        // 🔥 STORE SESSION
+        // ✅ STORE SESSION PROPERLY
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['name']    = $user['name'];
         $_SESSION['role']    = $user['role'];
 
-        // 🔥 RETURN USER DATA TO FRONTEND
         echo json_encode([
             "status"  => "success",
             "user_id" => $user['user_id'],
@@ -38,11 +37,11 @@ if ($result->num_rows === 1) {
         ]);
 
     } else {
-        echo json_encode(["status" => "error"]);
+        echo json_encode(["status" => "error", "message" => "Invalid password"]);
     }
 
 } else {
-    echo json_encode(["status" => "error"]);
+    echo json_encode(["status" => "error", "message" => "User not found"]);
 }
 
 $stmt->close();

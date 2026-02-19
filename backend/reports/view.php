@@ -1,8 +1,13 @@
 <?php
 session_start();
+<?php session_start(); ?>
+<header>
+    <?php echo $_SESSION['name']; ?> – View Reports
+</header>
 
-// Check if viewer logged in
-if (!isset($_SESSION['viewer_name'])) {
+
+// ✅ Check if user logged in (correct session name)
+if (!isset($_SESSION['name'])) {
     header("Location: ../login.html");
     exit();
 }
@@ -27,14 +32,14 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 
 $result = $conn->query($sql);
 
-// Output table rows only
+// Output table rows only (View Only)
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo "<tr>";
-        echo "<td>" . $row['report_id'] . "</td>";
-        echo "<td>" . $row['title'] . "</td>";
-        echo "<td>" . $row['description'] . "</td>";
-        echo "<td>" . $row['progress'] . "%</td>";
+        echo "<td>" . htmlspecialchars($row['report_id']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['title']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['description']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['progress']) . "%</td>";
         echo "</tr>";
     }
 } else {

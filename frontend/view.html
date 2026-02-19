@@ -71,27 +71,18 @@ th{
     background:#c0392b;
 }
 
-.back-btn{
-    display:inline-block;
-    margin-bottom:15px;
-    text-decoration:none;
-    background:#3498db;
-    color:white;
-    padding:10px 18px;
-    border-radius:5px;
-}
+
 </style>
 </head>
 
 <body>
 
 <header>
-    Admin – View Reports
+    <?php echo $_SESSION['name']; ?> – View Reports
 </header>
 
 <div class="container">
 
-<a href="dashboard.html" class="back-btn">⬅ Back to Dashboard</a>
 
 <table>
     <thead>
