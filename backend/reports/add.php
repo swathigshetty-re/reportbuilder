@@ -9,16 +9,23 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $data = json_decode(file_get_contents("php://input"), true);
+file_put_contents("debug.txt", print_r($data, true));
 
-$title       = trim($data['title'] ?? '');
-$description = trim($data['description'] ?? '');
-$status      = trim($data['status'] ?? '');
+$title        = trim($data['title'] ?? '');
+$description  = trim($data['description'] ?? '');
 $project_role = trim($data['project_role'] ?? '');
+$status       = trim($data['status'] ?? '');
 
-$created_by = $_SESSION['user_id']; // 🔥 REAL USER
 
-if (empty($title) || empty($status)) {
-    echo json_encode(["status" => "error", "message" => "Required fields missing"]);
+// 🔥 DEFAULT STATUS FIX
+if (empty($status)) {
+    $status = "Pending";
+}
+
+$created_by = $_SESSION['user_id'];
+
+if (empty($title)) {
+    echo json_encode(["status" => "error", "message" => "Title is required"]);
     exit;
 }
 
@@ -37,3 +44,4 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
+?>

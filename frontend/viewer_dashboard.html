@@ -116,28 +116,46 @@ const reportId = params.get("id");
 
 if (!reportId) {
     alert("No report selected");
-    window.location.href = "view-reports.html";
+    window.location.href = "view_report.html";
 }
 
-fetch("/reportbuilder/backend/reports/view.php?id=" + reportId)
-.then(response => response.json())
+// IMPORTANT: use correct PHP file name
+fetch("/reportbuilder/backend/reports/view_report.php?id=" + reportId)
+.then(response => {
+
+    if (!response.ok) {
+        throw new Error("Network response not OK");
+    }
+
+    return response.json();
+})
 .then(data => {
 
+    // If backend sends error
     if (data.status === "error") {
         alert(data.message || "Report not found");
         return;
     }
 
-    // Directly use data (no data.report)
-    document.getElementById("name").innerText = data.created_by || "";
-    document.getElementById("projectRole").innerText = data.project_role || "";
-    document.getElementById("project").innerText = data.title || "";
-    document.getElementById("comments").innerText = data.description || "";
-    document.getElementById("status").innerText = data.status || "";
+    // Directly use data object
+    document.getElementById("name").innerText =
+        data.created_by || "";
+
+    document.getElementById("projectRole").innerText =
+        data.project_role || "";
+
+    document.getElementById("project").innerText =
+        data.title || "";
+
+    document.getElementById("comments").innerText =
+        data.description || "";
+
+    document.getElementById("status").innerText =
+        data.status || "";
 
 })
 .catch(error => {
-    console.error("Error:", error);
+    console.error("Fetch error:", error);
     alert("Error loading report");
 });
 
