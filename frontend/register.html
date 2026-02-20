@@ -41,6 +41,7 @@ button:hover{
 #message{
     margin-top:10px;
     font-size:14px;
+    color:red;
 }
 </style>
 </head>
@@ -65,13 +66,13 @@ button:hover{
 
 <script>
 
-// Get role from URL
+// ✅ Get role from URL
 const params = new URLSearchParams(window.location.search);
 const role = params.get("role") || "viewer";
 
-// Update title
+// Update page title
 document.getElementById("roleTitle").innerText =
-    role === "admin" ? "Admin Register" : "Viewer Register";
+    role.toLowerCase() === "admin" ? "Admin Register" : "Viewer Register";
 
 // Update login link
 document.getElementById("loginLink").href =
@@ -85,7 +86,6 @@ async function register() {
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
     const message = document.getElementById("message");
 
-    message.style.color = "red";
     message.innerText = "";
 
     // Validation
@@ -107,7 +107,7 @@ async function register() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                username: username,
+                name: username,
                 password: password,
                 role: role
             })
@@ -117,16 +117,16 @@ async function register() {
 
         if (result.status === "success") {
 
-            // Store user info
+            // Save user info
             localStorage.setItem("user_id", result.user_id);
-            localStorage.setItem("role", result.role);
+            localStorage.setItem("role", role);
             localStorage.setItem("name", username);
 
-            // Redirect based on role
-            if (result.role === "admin") {
+            // ✅ Redirect based on ROLE from URL
+            if (role.toLowerCase() === "admin") {
                 window.location.href = "admin_dashboard.html";
             } else {
-                window.location.href = "view.html";
+                window.location.href = "view_reports.html";
             }
 
         } 
@@ -134,7 +134,7 @@ async function register() {
             message.innerText = "User already registered";
         } 
         else {
-            message.innerText = "Registration failed";
+            message.innerText = result.message || "Registration failed";
         }
 
     } catch (error) {

@@ -19,7 +19,7 @@ if (empty($status)) {
     $status = "Pending";
 }
 
-$created_by = (int) $_SESSION['user_id'];
+$created_by = (int) $_SESSION['name'];
 
 if (empty($title)) {
     echo json_encode(["status" => "error", "message" => "Title required"]);
