@@ -14,7 +14,15 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']);
 
-$sql = "SELECT * FROM reports WHERE report_id = $id";
+$sql = "SELECT 
+    r.report_id,
+    r.title,
+    r.status,
+    r.project_role,
+    u.name AS created_by_name
+FROM reports r
+JOIN users u ON r.created_by = u.user_id
+WHERE r.report_id = $id";
 $result = mysqli_query($conn, $sql);
 
 if ($result && mysqli_num_rows($result) > 0) {

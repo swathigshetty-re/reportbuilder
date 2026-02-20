@@ -81,7 +81,7 @@ th{
 <body>
 
 <header>
-    Admin – View Reports
+   Welcome  – <span id="adminName"></span>
 </header>
 
 <div class="container">
@@ -108,9 +108,20 @@ th{
 </div>
 
 <script>
+    
 
 let allReports = [];
 let table = document.getElementById("reportTable");
+// 🔹 Load Logged User
+fetch("/reportbuilder/backend/auth/get_user.php")
+.then(res => res.json())
+.then(data => {
+    if(data.status === "success"){
+        document.getElementById("adminName").innerText = data.name;
+    } else {
+        window.location.href = "login.html";
+    }
+});
 
 // 🔹 Load Reports
 function loadReports(){
@@ -132,7 +143,6 @@ function loadReports(){
     });
 }
 
-// 🔹 Display Reports
 function displayReports(data){
 
     table.innerHTML = "";
@@ -144,7 +154,7 @@ function displayReports(data){
             <td>${index + 1}</td>
             <td>${report.title}</td>
             <td>${report.status}</td>
-            <td>${report.created_by_name}</td>
+            <td>${report.created_by}</td>
             <td>
                 <button class="view-btn"
                     onclick="viewReport(${report.report_id})">
@@ -161,6 +171,7 @@ function displayReports(data){
         `;
     });
 }
+
 
 // 🔹 View Report
 function viewReport(reportId){

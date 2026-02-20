@@ -86,7 +86,7 @@ h1{
 <body>
 
 <div class="dashboard">
-    <h1>Viewer Report Dashboard</h1>
+   <h1>Welcome  – <span id="adminName"></span></h1>
     
 
     <div class="card">
@@ -110,6 +110,16 @@ h1{
 </div>
 
 <script>
+    // 🔹 Load Logged User
+fetch("/reportbuilder/backend/auth/get_user.php")
+.then(res => res.json())
+.then(data => {
+    if(data.status === "success"){
+        document.getElementById("adminName").innerText = data.name;
+    } else {
+        window.location.href = "login.html";
+    }
+});
 
 const params = new URLSearchParams(window.location.search);
 const reportId = params.get("id");

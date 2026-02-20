@@ -1,24 +1,24 @@
 <?php
-session_start();
 header("Content-Type: application/json");
-require_once "../config/db.php";
+session_start();
 
-// Get JSON data
+$conn = new mysqli("localhost", "root", "", "report_system");
+
+if ($conn->connect_error) {
+    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
+    exit;
+}
+
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (!$data) {
+if (!isset($data['name']) || !isset($data['password']) || !isset($data['role'])) {
     echo json_encode(["status" => "error", "message" => "Invalid JSON"]);
     exit;
 }
 
-$name     = trim($data['username'] ?? '');
-$password = trim($data['password'] ?? '');
-$role     = trim($data['role'] ?? '');
-
-if (empty($name) || empty($password) || empty($role)) {
-    echo json_encode(["status" => "empty"]);
-    exit;
-}
+$name = $data['name'];
+$password = password_hash($data['password'], PASSWORD_DEFAULT);
+$role = $data['role'];
 
 // Check if user already exists
 $check = $conn->prepare("SELECT user_id FROM users WHERE name = ?");
@@ -28,46 +28,24 @@ $check->store_result();
 
 if ($check->num_rows > 0) {
     echo json_encode(["status" => "exists"]);
-    $check->close();
-    $conn->close();
     exit;
 }
 
-$check->close();
-
-// Hash password
-$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-// Insert new user
-$stmt = $conn->prepare(
-    "INSERT INTO users (role, name, password, is_first_login) 
-     VALUES (?, ?, ?, 1)"
-);
-
-$stmt->bind_param("sss", $role, $name, $hashedPassword);
+$stmt = $conn->prepare("INSERT INTO users (name, password, role) VALUES (?, ?, ?)");
+$stmt->bind_param("sss", $name, $password, $role);
 
 if ($stmt->execute()) {
-
-    $newUserId = $stmt->insert_id;
-
-    // 🔥 Auto login after register
-    $_SESSION['user_id'] = $newUserId;
-    $_SESSION['name']    = $name;
-    $_SESSION['role']    = $role;
+    $user_id = $stmt->insert_id;
 
     echo json_encode([
-        "status"  => "success",
-        "user_id" => $newUserId,
-        "role"    => $role
+        "status" => "success",
+        "user_id" => $user_id,
+        "role" => $role
     ]);
-
 } else {
-
-    echo json_encode([
-        "status"  => "error",
-        "message" => $conn->error
-    ]);
+    echo json_encode(["status" => "error"]);
 }
 
 $stmt->close();
 $conn->close();
+?>
